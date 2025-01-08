@@ -3,74 +3,82 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
-namespace SK.Practice
+namespace Templates
 {
     public class JoystickHandler : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IDragHandler
     {
+        [Header("UI")]
         [SerializeField] private Image inner;
         [SerializeField] private Image outter;
 
-        private Vector3 _defaultPos;
-        private Vector3 _dir;
-        private float _radius;
+        [Header("Info")]
+        [SerializeField] private Vector3 defaultPos;
+        [SerializeField] private Vector3 dir;
+        [SerializeField] private float radius = 300f;
 
         private void Start()
         {
             if (inner != null)
             {
-                _defaultPos = inner.transform.position;
+                defaultPos = inner.transform.position;
 
                 if (outter != null)
                 {
-                    _radius = outter.rectTransform.rect.width * 0.5f;
+                    radius = outter.rectTransform.rect.width * 0.5f;
                 }
                 else
                 {
                     Debug.LogError("Need outter image");
                 }
             }
-            else
-            {
-                _defaultPos = transform.position;
-            }
         }
 
         public void OnPointerDown(PointerEventData eventData)
         {
+            //dir = ((Vector3)eventData.position - defaultPos).normalized;
+            defaultPos = eventData.position;
+
             if (inner != null)
             {
                 inner.transform.position = eventData.position;
             }
-
-            _dir = ((Vector3)eventData.position - _defaultPos).normalized;
         }
         public void OnDrag(PointerEventData eventData)
         {
-            float distance = Vector2.Distance(eventData.position, _defaultPos);
-
-            _dir = ((Vector3)eventData.position - _defaultPos).normalized;
+            dir = Normalize((Vector3)eventData.position - defaultPos);
 
             if (inner != null)
             {
-                if (distance > _radius)
+                float distance = Vector2.Distance(eventData.position, defaultPos);
+
+                if (distance > radius)
                 {
-                    inner.transform.position = _defaultPos + (_dir * _radius);
+                    inner.transform.position = defaultPos + (dir * radius);
                 }
                 else
                 {
-                    inner.transform.position = _defaultPos + _dir * distance;
+                    inner.transform.position = defaultPos + dir * distance;
                 }
             }
         }
 
         public void OnPointerUp(PointerEventData eventData)
         {
+            dir = Vector3.zero;
+
             if (inner != null)
             {
-                inner.transform.position = _defaultPos;
+                inner.transform.position = defaultPos;
             }
+        }
 
-            _dir = Vector3.zero;
+        private Vector3 Normalize(Vector3 dir)
+        {
+            dir.x = Mathf.Clamp(dir.x / radius, -1, 1);
+            dir.y = Mathf.Clamp(dir.y / radius, -1, 1);
+            dir.z = Mathf.Clamp(dir.z / radius, -1, 1);
+
+            return dir;
         }
     }
 }
