@@ -1,7 +1,16 @@
 using UnityEngine;
 using Templates;
+using Utility;
 
-public class InputManager : MonoBehaviour
+public class InputManager : SingletonPersistent<InputManager>
 {
-    [SerializeField] JoystickHandler
+    [SerializeField] private JoystickHandler joystickHandler;
+
+    private void Awake()
+    {
+        if (InitSingleton() == false)
+        {
+            return;
+        }
+    }
 }

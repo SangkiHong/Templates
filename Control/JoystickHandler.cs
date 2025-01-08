@@ -16,6 +16,8 @@ namespace Templates
         [SerializeField] private Vector3 dir;
         [SerializeField] private float radius = 300f;
 
+        public Vector3 Direction => dir;
+
         private void Start()
         {
             if (inner != null)

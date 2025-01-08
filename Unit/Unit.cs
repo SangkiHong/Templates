@@ -1,16 +1,20 @@
 using UnityEngine;
 
+[RequireComponent(typeof(Animator))]
 public abstract class Unit : MonoBehaviour
 {
     public Animator Animator;
-    public Transform ThisTransform;
+    
+    public Transform ThisTransform {  get; private set; }
 
     private static string AnimParam_MoveSpeed;
 
     void Awake()
     {
-        Animator = GetComponent<Animator>();
         ThisTransform = this.transform;
+        
+        if (Animator == null)
+            Animator = GetComponent<Animator>();
     }
 
     public void Idle()
